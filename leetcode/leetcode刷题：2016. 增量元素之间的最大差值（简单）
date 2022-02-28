@@ -1,0 +1,95 @@
+leetcode刷题：20220228打卡
+
+#### 2016. 增量元素之间的最大差值（简单）
+
+给你一个下标从 0 开始的整数数组 nums ，该数组的大小为 n ，请你计算 nums[j] - nums[i] 能求得的 最大差值 ，其中 0 <= i < j < n 且 nums[i] < nums[j] 。
+返回 最大差值 。如果不存在满足要求的 i 和 j ，返回 -1 。
+
+示例 1：
+> 输入：nums = [7,1,5,4]
+> 输出：4
+> 解释：最大差值出现在 i = 1 且 j = 2 时，nums[j] - nums[i] = 5 - 1 = 4 。注意，尽管 i = 1 且 j = 0 时 ，nums[j] - nums[i] = 7 - 1 = 6 > 4 ，但 i > j 不满足题面要求，所以 6 不是有效的答案。
+
+示例 2：
+> 输入：nums = [9,4,3,2]
+> 输出：-1
+> 解释：不存在同时满足 i < j 和 nums[i] < nums[j] 这两个条件的 i, j 组合。
+
+示例 3：
+> 输入：nums = [1,5,2,10]
+> 输出：9
+> 解释：最大差值出现在 i = 0 且 j = 3 时，nums[j] - nums[i] = 10 - 1 = 9 。
+ 
+
+提示：
+* n == nums.length
+* 2 <= n <= 1000
+* 1 <= nums[i] <= 109
+
+1. 自己解答
+   最开始想到暴力双层循环解答，即在数组 nums 遍历所有可能的 i 和 j ,通过判断记录符合条件的差值。但是忽略了条件 `nums[i] < nums[j]`，错误提交两次。且代码比较冗余。
+    ```C++
+    class Solution {
+    public:
+        int maximumDifference(vector<int>& nums) {
+            int n = nums.size();
+            int max = INT_MIN;
+            for (int i = 0;i < n - 1;i++) {
+                for (int j = i + 1;j < n;j++) {
+                    int diff = nums[j] - nums[i];
+                    if(diff > 0 && diff > max) {
+                        max = diff;
+                    }
+                }
+            }
+            if (max > diff) {
+                return max;
+            }
+            else{
+                return -1;
+            }
+        }
+    };
+    ```
+
+2. 参考并修改
+   修改返回差值 max 的初始值，减少了一次 if 判断，精简代码。
+    ```C++
+    class Solution {
+    public:
+        int maximumDifference(vector<int>& nums) {
+            int n = nums.size();
+            int max = -1;
+            for (int i = 0;i < n - 1;i++) {
+                for (int j = i + 1;j < n;j++) {
+                    int diff = nums[j] - nums[i];
+                    if(diff > 0 && diff > max) {
+                        max = diff;
+                    }
+                }
+            }
+            return max;
+        }
+    };
+    ```
+
+3. 参考官方：前缀最小值
+   单层循环实现，维护前缀为最小值，遍历另一个参与运算的值，且注意循环的初始数组下标。
+    ```C++
+    class Solution {
+    public:
+        int maximumDifference(vector<int>& nums) {
+            int n = nums.size();
+            int max_diff = -1;
+            int premin = nums[0];
+            for (int i = 1;i < n;i++) {
+                if (nums[i] > premin){
+                    max_diff = Math.max(max_diff,nums[i] - premin);
+                }else {
+                    premin = nums[i];
+                }
+            }
+            return max_diff;
+        }
+    };
+    ```
